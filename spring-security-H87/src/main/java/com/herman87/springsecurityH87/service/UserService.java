@@ -7,4 +7,6 @@ public interface UserService {
     User register(UserModel userModel);
 
     void saveVerificationTokenForUser(String token, User user);
+
+    String validateRegistrationToken(String token);
 }

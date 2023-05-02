@@ -6,9 +6,7 @@ import com.herman87.springsecurityH87.model.UserModel;
 import com.herman87.springsecurityH87.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.http.HttpRequest;
@@ -28,6 +26,15 @@ public class RegistrationController {
                 applicationUrl(request)
         ));
         return "Success";
+    }
+
+    @GetMapping("/verifyRegistration")
+    public String verifyRegistration(@RequestParam("token") String token) {
+        String result = userService.validateRegistrationToken(token);
+        if (result.equalsIgnoreCase("valid")) {
+            return "User Verifies Succcessfully";
+        }
+        return "Bad user";
     }
 
     private String applicationUrl(HttpServletRequest request) {
