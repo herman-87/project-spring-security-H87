@@ -5,4 +5,6 @@ import com.herman87.springsecurityH87.model.UserModel;
 
 public interface UserService {
     User register(UserModel userModel);
+
+    void saveVerificationTokenForUser(String token, User user);
 }
