@@ -19,7 +19,9 @@ public class WebSecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         final String[] WHITE_LIST_URLS = {
                 "/hello",
-                "/register"
+                "/register",
+                "verifyRegistration*",
+                "/resendVerifyToken*"
         };
 
         http

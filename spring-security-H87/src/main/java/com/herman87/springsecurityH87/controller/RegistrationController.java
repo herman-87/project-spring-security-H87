@@ -1,17 +1,19 @@
 package com.herman87.springsecurityH87.controller;
 
 import com.herman87.springsecurityH87.entity.User;
+import com.herman87.springsecurityH87.entity.VerificationToken;
 import com.herman87.springsecurityH87.event.RegistrationCompleteEvent;
 import com.herman87.springsecurityH87.model.UserModel;
 import com.herman87.springsecurityH87.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.net.http.HttpRequest;
 
 @RestController
+@Slf4j
 public class RegistrationController {
     @Autowired
     private UserService userService;
@@ -28,11 +30,33 @@ public class RegistrationController {
         return "Success";
     }
 
+    @GetMapping("/resendVerifyToken")
+    public String resendVerificationToken(@RequestParam("token") String oldToken,
+                                          HttpServletRequest request) {
+        VerificationToken verificationToken = userService.generateNewVerificationToken(oldToken);
+        User user = verificationToken.getUser();
+        resendVerificationTokenMail(user, applicationUrl(request), verificationToken);
+        return "verification link sent";
+
+    }
+
+    private void resendVerificationTokenMail(
+            User user,
+            String applicationUrl,
+            VerificationToken verificationToken
+    ) {
+        String url =
+                applicationUrl + "/verifyRegistration?token=" + verificationToken.getToken();
+
+        //sendVerificationEmail
+        log.info("Click the link to verify your account: {}", url);
+    }
+
     @GetMapping("/verifyRegistration")
     public String verifyRegistration(@RequestParam("token") String token) {
         String result = userService.validateRegistrationToken(token);
         if (result.equalsIgnoreCase("valid")) {
-            return "User Verifies Succcessfully";
+            return "User Verifies Successfully";
         }
         return "Bad user";
     }
